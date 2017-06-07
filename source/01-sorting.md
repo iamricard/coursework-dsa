@@ -1,7 +1,5 @@
 # Analysis of Sorting Algorithms
 
-Selection sort and benchmark utility code can be found Appendix A.
-
 ## Sort time growth
 
 \pgfplotstableread[col sep=semicolon,trim cells,row sep=crcr]{
@@ -51,26 +49,45 @@ Selection sort and benchmark utility code can be found Appendix A.
 \begin{tikzpicture}
   \begin{axis}[
     ybar,
-    bar width=1.5cm,
-    title={Runtime in ms per algorithm for 200,000 items},
+    bar width=.5cm,
+    title={Runtime in ms per algorithm per \# of items},
     width=\textwidth,
     height=.8\textwidth,
-    scaled ticks=false, tick label style={/pgf/number format/fixed},
-    xlabel={Algorithm},
-    xticklabel style={text height=2ex},
+    xlabel={Number of items},
     ylabel={Time in ms (less is better)},
+    scaled ticks=false, tick label style={/pgf/number format/fixed},
     ytick=data,
+    xtick=data,
     legend pos=north west,
     ymajorgrids=true,
     grid style=dashed,
-    symbolic x coords={Bubble Sort,Selection Sort, Insertion Sort, Merge Sort},
-    xtick={Bubble Sort,Selection Sort, Insertion Sort, Merge Sort},
   ]
-  \addplot table[x=algorithm,y=time,color=red]{\runtimedata};
+  \addplot+[red] table[x=interval,y=sortB]{\sortdata};
+  \addplot+[orange] table[x=interval,y=sortS]{\sortdata};
+  \addplot+[yellow] table[x=interval,y=sortI]{\sortdata};
+  \addplot+[green] table[x=interval,y=sortM]{\sortdata};
+  \legend{Bubble Sort,Selection Sort,Insertion Sort,Merge Sort}
   \end{axis}
 \end{tikzpicture}
 
-## Reflection
+## Reflection[^longnote]
 
-> Write a short reflection on the graphs, discussing the time complexity of the
-> tested algorithm in terms of the `Big (O)` notation.
+We know that the complexity for the algorithms benchmarked above ---$O(n^2)$,
+$O(n^2)$, $O(n^2)$ and $O(n\log_2(n))$ respectively---, and we can see that
+mapped accurately in the plots above.
+
+The first plot, the graph displayed on section 1.1, shows the increment in time
+for the  _bubble_, _selection_, and _insertion_ sort algorithms as exponential.
+Their curves vary greatly because `Big O` is not meant to give an accurate
+description of the time, just of how it'll scale. The point being, they all
+scale in a similar manner. The green line represents the _merge_ sort algorithm
+which is, along with _quicksort_, considered to be the best algorithm overall.
+We can barely see it scale because the plot is drawn next to the quadratic plot
+of _bubble_ sort. If we look closely, though, we can see it almost resembles a
+linear time complexity, but not quite.
+
+The second plot, a bar graph displayed on section 1.2, uses the same colors and
+the same data to represent, perhaps more clearly, how each algorithm fairs
+amongst each other using the same dataset.
+
+[^longnote]: Selection sort and benchmark utility code can be found Appendix A.

@@ -15,7 +15,6 @@ $(TARGET): source/*.yaml source/*.md
 	-s -o $(TARGET) $^ \
 	--top-level-division=chapter \
 	--number-sections \
-	--listings \
 	--latex-engine=xelatex
 
 clean:
