@@ -4,7 +4,7 @@
     - Google UK
     - Ada National College for Digital Skills
   date: \today
-  title: "Data Structures & Algorithms Coursework"
+  title: "Data Structures & Algorithms"
   toc: true
   lang: "en"
   papersize: "a4"
@@ -13,6 +13,11 @@
   subparagraph: yes
   include-before:
   - \vspace*{\fill}
+  - \section*{Foreword}
+  - Some of the code samples in this hand-in are in Haskell, as opposed to
+    pseudocode. This is because it made for easier testing and data modeling for
+    the problems. It happens to be a very expressive language that closely
+    resembles mathematical functions.
   - \section*{Declaration}
   - I confirm that the submitted coursework is my own work and that all material
     attributed to others (whether published or unpublished) has been clearly

@@ -1,0 +1,305 @@
+\documentclass[english,a4paper,]{report}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdftitle={Data Structures \& Algorithms},
+            pdfauthor={Ricard Solé Casas},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[shorthands=off,main=english]{babel}
+\else
+  \usepackage{polyglossia}
+  \setmainlanguage[]{english}
+\fi
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{minted}
+\usemintedstyle{autumn}
+
+\usepackage{fontspec}
+\setmonofont{Hasklig}
+\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase,Ligatures=TeX}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{bchart}
+
+\title{Data Structures \& Algorithms}
+\author{Ricard Solé Casas}
+\providecommand{\institute}[1]{}
+\institute{Google UK \and Ada National College for Digital Skills}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\vspace*{\fill}
+
+\section*{Foreword}
+
+Some of the code samples in this hand-in are in Haskell, as opposed to
+pseudocode. This is because it made for easier testing and data modeling
+for the problems. It happens to be a very expressive language that
+closely resembles mathematical functions.
+
+\section*{Declaration}
+
+I confirm that the submitted coursework is my own work and that all
+material attributed to others (whether published or unpublished) has
+been clearly identified and fully acknowledged and referred to original
+sources. I agree that the College has the right to submit my work to the
+plagiarism detection service. TurnitinUK for originality checks.
+
+\section*{Acknowledgements}
+
+I'd like to thank my partner Shannon for her continued support and
+challenges that help me grow, both professionally and personally. I
+would also like to thank all of you who also helped me get here.
+
+\vspace*{\fill}
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\chapter{Analysis of Sorting
+Algorithms}\label{analysis-of-sorting-algorithms}
+
+\section{Sort time growth}\label{sort-time-growth}
+
+\pgfplotstableread[col sep=semicolon,trim cells,row sep=crcr]{
+  interval; sortB     ; sortS        ; sortI        ; sortM \\
+  10000   ; 194       ; 49           ; 31           ; 4     \\
+  50000   ; 6318      ; 1165         ; 481          ; 20    \\
+  100000  ; 24193     ; 4472         ; 1742         ; 33    \\
+  150000  ; 54464     ; 10321        ; 4102         ; 40    \\
+  200000  ; 96889     ; 18180        ; 7429         ; 76    \\
+}\sortdata
+
+\begin{tikzpicture}
+  \begin{axis}[
+    title={Sorting algorithms runtime growth},
+    width=\textwidth,
+    height=.8\textwidth,
+    scaled ticks=false, tick label style={/pgf/number format/fixed},
+    xlabel={Number of items},
+    ylabel={Time in ms (less is better)},
+    xmin=0, xmax=200000,
+    ymin=0, ymax=100000,
+    xtick=data,
+    ytick=data,
+    legend pos=north west,
+    ymajorgrids=true,
+    grid style=dashed,
+    every axis plot/.append style={ultra thick},
+  ]
+  \addplot+[red] table[x=interval,y=sortB]{\sortdata};
+  \addplot+[orange] table[x=interval,y=sortS]{\sortdata};
+  \addplot+[yellow] table[x=interval,y=sortI]{\sortdata};
+  \addplot+[green] table[x=interval,y=sortM]{\sortdata};
+  \legend{Bubble Sort,Selection Sort,Insertion Sort,Merge Sort}
+  \end{axis}
+\end{tikzpicture}
+
+\section{Runtime Comparison}\label{runtime-comparison}
+
+\pgfplotstableread[col sep=semicolon,trim cells,row sep=crcr]{
+  algorithm      ; time  \\
+  Bubble Sort    ; 96889 \\
+  Selection Sort ; 18180 \\
+  Insertion Sort ; 7429  \\
+  Merge Sort     ; 76    \\
+}\runtimedata
+
+\begin{tikzpicture}
+  \begin{axis}[
+    ybar,
+    bar width=.5cm,
+    title={Runtime in ms per algorithm per \# of items},
+    width=\textwidth,
+    height=.8\textwidth,
+    xlabel={Number of items},
+    ylabel={Time in ms (less is better)},
+    scaled ticks=false, tick label style={/pgf/number format/fixed},
+    ytick=data,
+    xtick=data,
+    legend pos=north west,
+    ymajorgrids=true,
+    grid style=dashed,
+  ]
+  \addplot+[red] table[x=interval,y=sortB]{\sortdata};
+  \addplot+[orange] table[x=interval,y=sortS]{\sortdata};
+  \addplot+[yellow] table[x=interval,y=sortI]{\sortdata};
+  \addplot+[green] table[x=interval,y=sortM]{\sortdata};
+  \legend{Bubble Sort,Selection Sort,Insertion Sort,Merge Sort}
+  \end{axis}
+\end{tikzpicture}
+
+\section[Reflection]{\texorpdfstring{Reflection\footnote{Selection sort
+  and benchmark utility code can be found Appendix A.}}{Reflection}}\label{reflectionlongnote}
+
+We know that the complexity for the algorithms benchmarked above
+---\(O(n^2)\), \(O(n^2)\), \(O(n^2)\) and \(O(n\log_2(n))\)
+respectively---, and we can see that mapped accurately in the plots
+above.
+
+The first plot, the graph displayed on section 1.1, shows the increment
+in time for the \emph{bubble}, \emph{selection}, and \emph{insertion}
+sort algorithms as exponential. Their curves vary greatly because
+\texttt{Big\ O} is not meant to give an accurate description of the
+time, just of how it'll scale. The point being, they all scale in a
+similar manner. The green line represents the \emph{merge} sort
+algorithm which is, along with \emph{quicksort}, considered to be the
+best algorithm overall. We can barely see it scale because the plot is
+drawn next to the quadratic plot of \emph{bubble} sort. If we look
+closely, though, we can see it almost resembles a linear time
+complexity, but not quite.
+
+The second plot, a bar graph displayed on section 1.2, uses the same
+colors and the same data to represent, perhaps more clearly, how each
+algorithm fairs amongst each other using the same dataset.
+
+\chapter{Segregate Even and Odd
+numbers}\label{segregate-even-and-odd-numbers}
+
+\section{Task}\label{task}
+
+Given an array \texttt{A{[}{]}}, write an algorithm in pseudocode that
+segregates even and odd numbers. The algorithm should put all even
+numbers first, and then odd numbers.
+
+\section[Implementation]{\texorpdfstring{Implementation\footnote{Full
+  program sample can be found on Appendix B}}{Implementation}}\label{implementation2}
+
+\inputminted[firstline=9,lastline=17]{haskell}{code_samples/Isolate.hs}
+
+\section{Complexity analysis}\label{complexity-analysis}
+
+For the algorithm implemented in section 2.2:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{filter}ing through an array for \texttt{even} or \texttt{odd}
+  numbers has a complexity of \(O(n)\), where \(n\) is the length of the
+  given list.
+\item
+  \texttt{(++)} has a complexity of \(O(m)\)\footnote{https://goo.gl/yZu7Ig},
+  where \(m\) is the length of the second list.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(m = length(odds(xs))\) in our case
+  \end{itemize}
+\item
+  With this we can conclude that the complexity of this algorithm is
+  \(O(2n+m)\), which can be simplified to \(O(n+m)\).
+\end{itemize}
+
+\chapter[Recursion]{\texorpdfstring{Recursion\footnote{Full code samples
+  can be found on Appendix C}}{Recursion}}\label{recursion4}
+
+\section{Pizza cutting}\label{pizza-cutting}
+
+\subsection{Problem definition}\label{problem-definition}
+
+When you cut a pizza, you cut along a diameter of the pizza. Let
+\texttt{pizza(n)} be the number of slices of pizza that exist after you
+have made \texttt{n} cuts, where \texttt{n\ ≥\ 1}. For example,
+\texttt{pizza(2)\ =\ 4} because there are four slices after two diagonal
+cuts.
+
+Write a recursive method \texttt{pizza(n)} to return the number of
+slices and verify the correctness of your method when the pizza is cut 4
+times \emph{(3 points)}.
+
+\subsection{Implementation}\label{implementation}
+
+\inputminted[firstline=6,lastline=9]{haskell}{code_samples/Pizza.hs}
+
+\section{Parking}\label{parking}
+
+\subsection{Problem definition}\label{problem-definition-1}
+
+A bunch of motorcycles and cars want to parallel park on a street. The
+street can fit \texttt{n} motorcycles, but one car take up three
+motorcycle spaces. Let \texttt{a(n)} be the number of arrangements of
+cars and motorcycles on a street that fits n motorcycles \emph{(7
+points)}.
+
+\subsection{Implementation}\label{implementation-1}
+
+\inputminted[firstline=6,lastline=11]{haskell}{code_samples/Parking.hs}
+
+\subsection{\texorpdfstring{Possible Arrangements
+\(n = 6\)}{Possible Arrangements n = 6}}\label{possible-arrangements-n-6}
+
+MMMC, MMCM, MCMM, CMMM, MMMMMM, CC.
+
+\chapter{Appendix A}\label{appendix-a}
+
+\section{Benchmark.java}\label{benchmark.java}
+
+\inputminted{java}{code_samples/Benchmark.java}
+
+\section{SelectionSort.java}\label{selectionsort.java}
+
+\inputminted{java}{code_samples/SelectionSort.java}
+
+\chapter{Appendix B}\label{appendix-b}
+
+\section{Isolate.hs}\label{isolate.hs}
+
+\inputminted{haskell}{code_samples/Isolate.hs}
+
+\chapter{Appendix C}\label{appendix-c}
+
+\section{Pizza.hs}\label{pizza.hs}
+
+\inputminted{haskell}{code_samples/Pizza.hs}
+
+\section{Parking.hs}\label{parking.hs}
+
+\inputminted{haskell}{code_samples/Parking.hs}
+
+\end{document}
